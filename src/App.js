@@ -10,10 +10,10 @@ const App = () => {
 
   // Fetch Tasks
   const fetchTasksServer = async () => {
-    const res = await fetch("http://localhost:5000/tasks");
+    const res = await fetch("https://us-central1-task-list-ecc42.cloudfunctions.net/api/tasks");
     const data = await res.json();
 
-    return data;
+    return data.result;
   };
 
   // fetch tasks front
@@ -26,26 +26,18 @@ const App = () => {
     getTasks();
   }, []);
 
-  // fetch Task
-  const fetchTask = async (id) => {
-    const res = await fetch(`http://localhost:5000/tasks/${id}`);
-    const data = await res.json();
-
-    return data;
-  };
-
   // Add Task server
   const addTaskServer = async (task) => {
-    const res = await fetch("http://localhost:5000/tasks", {
+    const res = await fetch("https://us-central1-task-list-ecc42.cloudfunctions.net/api/tasks", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
       },
-      body: JSON.stringify(task),
+      body: JSON.stringify({task: task}),
     });
 
     const data = await res.json();
-    return data;
+    return data.result;
   };
 
   // Add Task
@@ -56,7 +48,7 @@ const App = () => {
 
   // Delete Task server
   const deleteTaskServer = async (id) => {
-    const res = await fetch(`http://localhost:5000/tasks/${id}`, {
+    const res = await fetch(`https://us-central1-task-list-ecc42.cloudfunctions.net/api/tasks/${id}`, {
       method: "DELETE",
     });
     return res.status;
@@ -71,25 +63,22 @@ const App = () => {
   };
 
   // update reminder server
-  const updateReminderServer = async (id) => {
-    let taskToUpdate = await fetchTask(id);
-    taskToUpdate.reminder = !taskToUpdate.reminder;
-
-    const res = await fetch(`http://localhost:5000/tasks/${id}`, {
+  const updateReminderServer = async (id, reminder) => {
+    const res = await fetch(`https://us-central1-task-list-ecc42.cloudfunctions.net/api/tasks/${id}`, {
       method: "PUT",
       headers: {
         "Content-type": "application/json",
       },
-      body: JSON.stringify(taskToUpdate),
+      body: JSON.stringify({reminder: !reminder}),
     });
 
     const data = await res.json();
-    return data;
+    return data.result;
   };
 
   // update reminder
-  const updateReminder = async (id) => {
-    const data = await updateReminderServer(id);
+  const updateReminder = async (id, reminder) => {
+    const data = await updateReminderServer(id, reminder);
 
     setTasks(
       tasks.map((task) =>
